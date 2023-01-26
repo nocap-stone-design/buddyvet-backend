@@ -13,7 +13,6 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 
 import org.hibernate.annotations.ColumnDefault;
-import org.hibernate.annotations.DynamicInsert;
 
 import com.capstone.buddyvet.common.domain.BaseTimeEntity;
 import com.capstone.buddyvet.domain.enums.Provider;
@@ -25,7 +24,6 @@ import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
-@DynamicInsert
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class User extends BaseTimeEntity {
 	@Id
@@ -41,7 +39,7 @@ public class User extends BaseTimeEntity {
 
 	@Enumerated(EnumType.STRING)
 	@Column(nullable = false, columnDefinition = "CHAR(16)")
-	@ColumnDefault("ACTIVE")
+	@ColumnDefault("'ACTIVE'")
 	private UserState state;
 
 	@Enumerated(EnumType.STRING)
