@@ -54,4 +54,7 @@ public class Buddy extends BaseTimeEntity {
 
 	@Column(nullable = false)
 	private LocalDateTime adoptedAt;
+
+	@Column(nullable = false, columnDefinition = "TINYINT(1)")
+	private boolean isActivated;
 }
