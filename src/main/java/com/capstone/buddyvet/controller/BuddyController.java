@@ -7,7 +7,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.capstone.buddyvet.common.dto.ResponseDto;
 import com.capstone.buddyvet.dto.Buddy.SaveRequest;
@@ -73,5 +75,16 @@ public class BuddyController {
 	@DeleteMapping("/{buddyId}")
 	public ResponseDto buddyRemove(@PathVariable Long buddyId) {
 		return new ResponseDto(buddyService.removeBuddy(buddyId));
+	}
+
+	/**
+	 * 버디 프로필 사진 업로드
+	 * @param buddyId 사진 적용할 버디 ID
+	 * @param file 적용할 이미지 파일
+	 * @return 성공 시 null
+	 */
+	@PostMapping("/{buddyId}/image")
+	public ResponseDto imageUpload(@PathVariable Long buddyId, @RequestParam("file") MultipartFile file) {
+		return new ResponseDto(null);
 	}
 }
