@@ -58,5 +58,5 @@ jobs:
             docker stop BUDDY
             docker rm -f BUDDY
             docker pull ${{ secrets.DOCKER_USERNAME }}/buddyvet-server
-            docker-compose up -d
+            docker-compose start capstone
             docker image prune -f
