@@ -16,9 +16,11 @@ import org.hibernate.annotations.ColumnDefault;
 
 import com.capstone.buddyvet.common.domain.BaseTimeEntity;
 import com.capstone.buddyvet.domain.enums.Provider;
+import com.capstone.buddyvet.domain.enums.RoleType;
 import com.capstone.buddyvet.domain.enums.UserState;
 
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -31,7 +33,7 @@ public class User extends BaseTimeEntity {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	@Column(nullable = false, length = 64)
+	@Column(length = 64)
 	private String nickname;
 
 	@Column(columnDefinition = "TEXT")
@@ -49,6 +51,9 @@ public class User extends BaseTimeEntity {
 	@Column(nullable = false)
 	private String socialId;
 
+	@Enumerated(EnumType.STRING)
+	private RoleType roleType;
+
 	private String fcmToken;
 
 	@Column(nullable = false, columnDefinition = "TINYINT(1)")
@@ -62,4 +67,18 @@ public class User extends BaseTimeEntity {
 
 	@OneToMany(mappedBy = "user")
 	private List<Post> posts = new ArrayList<>();
+
+	@Builder
+	public User(String socialId, String nickname) {
+		this.state = UserState.ACTIVE;
+		this.provider = Provider.KAKAO;
+		this.socialId = socialId;
+		this.nickname = nickname;
+		this.isAllowPush = false;
+		this.roleType = RoleType.USER;
+	}
+
+	public boolean isActivate() {
+		return this.state == UserState.ACTIVE;
+	}
 }
