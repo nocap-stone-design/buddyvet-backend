@@ -87,9 +87,9 @@ public class S3Uploader {
 
 	private void removeNewFile(File targetFile) {
 		if (targetFile.delete()) {
-			log.debug("파일이 삭제되었습니다.");
+			log.info("파일이 삭제되었습니다.");
 		} else {
-			log.debug("파일이 삭제되지 못했습니다.");
+			log.warn("파일이 삭제되지 못했습니다.");
 		}
 	}
 }
