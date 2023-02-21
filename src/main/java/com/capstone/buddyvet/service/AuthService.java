@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.capstone.buddyvet.common.auth.KakaoAuthService;
+import com.capstone.buddyvet.common.dto.ResponseDto;
 import com.capstone.buddyvet.common.enums.ErrorCode;
 import com.capstone.buddyvet.common.exception.RestApiException;
 import com.capstone.buddyvet.domain.User;
@@ -43,7 +44,7 @@ public class AuthService {
 	 * @return jwt
 	 */
 	@Transactional
-	public ResponseEntity<JwtResponse> login(LoginRequest request) {
+	public ResponseEntity<ResponseDto<JwtResponse>> login(LoginRequest request) {
 		SocialUserInfo userInfo = kakaoAuthService.getUserInfo(request)
 			.orElseThrow(() -> new RestApiException(ErrorCode.OAUTH_PROVIDER_CONNECT_ERROR));
 
@@ -55,9 +56,9 @@ public class AuthService {
 
 		if (findUser.isEmpty()) {
 			return ResponseEntity.status(HttpStatus.CREATED)
-				.body(new JwtResponse(jwt));
+				.body(new ResponseDto<>(new JwtResponse(jwt)));
 		}
-		return ResponseEntity.ok(new JwtResponse(jwt));
+		return ResponseEntity.ok(new ResponseDto<>(new JwtResponse(jwt)));
 	}
 
 	/**
