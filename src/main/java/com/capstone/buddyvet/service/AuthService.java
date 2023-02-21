@@ -20,6 +20,7 @@ import com.capstone.buddyvet.dto.Auth.JwtResponse;
 import com.capstone.buddyvet.dto.Auth.LoginRequest;
 import com.capstone.buddyvet.dto.Auth.SocialUserInfo;
 import com.capstone.buddyvet.repository.UserRepository;
+import com.capstone.buddyvet.security.SecurityUtil;
 import com.capstone.buddyvet.security.TokenProvider;
 
 import lombok.RequiredArgsConstructor;
@@ -74,5 +75,16 @@ public class AuthService {
 		SecurityContextHolder.getContext().setAuthentication(authentication);
 
 		return tokenProvider.createToken(authentication);
+	}
+
+	/**
+	 * 현재 로그인 유저 반환
+	 * @return 현재 jwt 로 SecurityContext 에 저장된 id 를 이용해 유저 엔티티 조회 후 반환
+	 * 없을 시 LOAD_USER_ERROR exception
+	 */
+	public User getCurrentUser() {
+		return SecurityUtil.getCurrentUsername()
+			.flatMap(id -> userRepository.findById(Long.valueOf(id)))
+			.orElseThrow(() -> new RestApiException(ErrorCode.LOAD_USER_ERROR));
 	}
 }
