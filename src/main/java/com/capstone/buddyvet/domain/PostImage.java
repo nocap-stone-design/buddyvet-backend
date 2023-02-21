@@ -40,4 +40,9 @@ public class PostImage extends BaseTimeEntity {
 	@Enumerated(EnumType.STRING)
 	@Column(nullable = false, columnDefinition = "CHAR(8)")
 	private ImageState state;
+
+	//==비즈니스 로직==//
+	public void delete() {
+		state = ImageState.DELETED;
+	}
 }
