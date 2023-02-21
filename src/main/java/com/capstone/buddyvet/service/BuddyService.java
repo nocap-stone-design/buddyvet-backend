@@ -2,11 +2,10 @@ package com.capstone.buddyvet.service;
 
 import org.springframework.stereotype.Service;
 
-import com.capstone.buddyvet.common.dto.ResponseDto;
-import com.capstone.buddyvet.dto.Buddy.SaveRequest;
-import com.capstone.buddyvet.dto.Buddy.SaveResponse;
 import com.capstone.buddyvet.dto.Buddy.BuddiesResponse;
 import com.capstone.buddyvet.dto.Buddy.DetailResponse;
+import com.capstone.buddyvet.dto.Buddy.SaveRequest;
+import com.capstone.buddyvet.dto.Buddy.SaveResponse;
 import com.capstone.buddyvet.repository.BuddyRepository;
 
 import lombok.RequiredArgsConstructor;
