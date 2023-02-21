@@ -51,6 +51,7 @@ public class UserDiary extends BaseTimeEntity {
 	private List<UserDiaryImage> userDiaryImages = new ArrayList<>();
 
 	@Enumerated(EnumType.STRING)
+	@Column(nullable = false, columnDefinition = "CHAR(8)")
 	private DiaryState state;
 
 	@Builder
