@@ -17,6 +17,7 @@ import com.capstone.buddyvet.common.domain.BaseTimeEntity;
 import com.capstone.buddyvet.domain.enums.ImageState;
 
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -41,8 +42,17 @@ public class PostImage extends BaseTimeEntity {
 	@Column(nullable = false, columnDefinition = "CHAR(8)")
 	private ImageState state;
 
+	public PostImage(String url) {
+		this.url = url;
+		this.state = ImageState.ACTIVE;
+	}
+
 	//==비즈니스 로직==//
 	public void delete() {
 		state = ImageState.DELETED;
+	}
+
+	public void setPost(Post post) {
+		this.post = post;
 	}
 }

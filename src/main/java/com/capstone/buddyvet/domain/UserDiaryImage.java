@@ -40,4 +40,18 @@ public class UserDiaryImage extends BaseTimeEntity {
 	@Enumerated(EnumType.STRING)
 	@Column(nullable = false, columnDefinition = "CHAR(8)")
 	private ImageState state;
+
+	public UserDiaryImage(String url) {
+		this.url = url;
+		this.state = ImageState.ACTIVE;
+	}
+
+	//==비즈니스 로직==//
+	public void delete() {
+		state = ImageState.DELETED;
+	}
+
+	public void setDiary(UserDiary userDiary) {
+		this.userDiary = userDiary;
+	}
 }

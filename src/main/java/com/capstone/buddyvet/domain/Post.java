@@ -1,8 +1,10 @@
 package com.capstone.buddyvet.domain;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -17,7 +19,6 @@ import javax.persistence.OneToMany;
 
 import com.capstone.buddyvet.common.domain.BaseTimeEntity;
 import com.capstone.buddyvet.domain.enums.PostState;
-import com.capstone.buddyvet.dto.Diary;
 
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -37,8 +38,11 @@ public class Post extends BaseTimeEntity {
 	@JoinColumn(name = "user_id")
 	private User user;
 
-	@OneToMany(mappedBy = "post")
-	private List<PostImage> postImage = new ArrayList<>();
+	@OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
+	private List<PostImage> postImages = new ArrayList<>();
+
+	@Column(nullable = false)
+	private LocalDate date;
 
 	@Column(nullable = false, columnDefinition = "VARCHAR(128)")
 	private String title;
@@ -50,8 +54,9 @@ public class Post extends BaseTimeEntity {
 	private PostState state;
 
 	@Builder
-	public Post(User user, String title, String content) {
+	public Post(User user, LocalDate date, String title, String content) {
 		this.user = user;
+		this.date = date;
 		this.title = title;
 		this.content = content;
 		this.state = PostState.ACTIVE;
@@ -60,5 +65,10 @@ public class Post extends BaseTimeEntity {
 	//==비즈니스 로직==//
 	public void delete() {
 		this.state = PostState.DELETED;
+	}
+
+	public void saveImage(PostImage postImage) {
+		this.postImages.add(postImage);
+		postImage.setPost(this);
 	}
 }
