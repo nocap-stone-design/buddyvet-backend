@@ -111,6 +111,7 @@ public class DiaryService {
 	 * 일기 ID 로 일기 엔티티 조회
 	 * @param diaryId 조회할 일기 ID
 	 * @return ID 에 해당하는 일기 엔티티
+	 * TODO 명칭대로 로직 수정
 	 */
 	private UserDiary getDiaryAndValidate(Long diaryId) {
 		return diaryRepository.findByIdAndState(diaryId, DiaryState.ACTIVE)
