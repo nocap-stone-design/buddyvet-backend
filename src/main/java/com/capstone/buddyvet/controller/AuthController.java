@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.capstone.buddyvet.common.dto.ResponseDto;
 import com.capstone.buddyvet.dto.Auth.JwtResponse;
 import com.capstone.buddyvet.dto.Auth.LoginRequest;
 import com.capstone.buddyvet.service.AuthService;
@@ -25,7 +26,7 @@ public class AuthController {
 	 * @return jwt, 회원가입 시 201, 로그인 시 200
 	 */
 	@PostMapping("/login")
-	public ResponseEntity<JwtResponse> login(@RequestBody LoginRequest request) {
+	public ResponseEntity<ResponseDto<JwtResponse>> login(@RequestBody LoginRequest request) {
 		return authService.login(request);
 	}
 }
