@@ -19,6 +19,7 @@ import javax.persistence.OneToMany;
 
 import com.capstone.buddyvet.common.domain.BaseTimeEntity;
 import com.capstone.buddyvet.domain.enums.DiaryState;
+import com.capstone.buddyvet.dto.Diary;
 
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -71,5 +72,11 @@ public class UserDiary extends BaseTimeEntity {
 	public void saveImage(UserDiaryImage diaryImage) {
 		this.userDiaryImages.add(diaryImage);
 		diaryImage.setDiary(this);
+	}
+
+	public void update(Diary.AddRequest request) {
+		this.date = request.getDate();
+		this.title = request.getTitle();
+		this.content = request.getContent();
 	}
 }

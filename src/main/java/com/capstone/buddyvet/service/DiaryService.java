@@ -53,6 +53,12 @@ public class DiaryService {
 	}
 
 	@Transactional
+	public void modifyDiary(Long diaryId, AddRequest request) {
+		UserDiary diary = getDiaryAndValidate(diaryId);
+		diary.update(request);
+	}
+
+	@Transactional
 	public void removeDiary(Long diaryId) {
 		UserDiary diary = getDiaryAndValidate(diaryId);
 		validateDiaryUser(diary);
@@ -113,7 +119,10 @@ public class DiaryService {
 	 * @return ID 에 해당하는 일기 엔티티
 	 */
 	private UserDiary getDiaryAndValidate(Long diaryId) {
-		return diaryRepository.findByIdAndState(diaryId, DiaryState.ACTIVE)
+		UserDiary diary = diaryRepository.findByIdAndState(diaryId, DiaryState.ACTIVE)
 			.orElseThrow(() -> new RestApiException(ErrorCode.NOT_FOUND_DIARY));
+		validateDiaryUser(diary);
+
+		return diary;
 	}
 }
