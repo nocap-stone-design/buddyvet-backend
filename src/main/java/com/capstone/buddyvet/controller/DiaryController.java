@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -59,6 +60,19 @@ public class DiaryController {
 	@PostMapping
 	public ResponseDto<AddResponse> diaryAdd(@RequestBody AddRequest request) {
 		return new ResponseDto<>(diaryService.addDiary(request));
+	}
+
+	/**
+	 * 일기 수정
+	 * @param diaryId 수정할 일기 ID
+	 * @param request 수정할 일기 정보
+	 * @return null
+	 */
+	@PutMapping("/{diaryId}")
+	public ResponseDto diaryModify(@PathVariable Long diaryId, @RequestBody AddRequest request) {
+		diaryService.modifyDiary(diaryId, request);
+		return new ResponseDto(null);
+
 	}
 
 	/**
