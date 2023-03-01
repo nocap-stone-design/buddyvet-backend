@@ -25,7 +25,13 @@ public enum ErrorCode {
 
 	// File 관련
 	FILE_CONVERT_ERROR("5000", HttpStatus.INTERNAL_SERVER_ERROR, "파일 변환에 실패했습니다."),
-	FILE_UPLOAD_ERROR("5001", HttpStatus.INTERNAL_SERVER_ERROR, "파일 서버 업로드에 실패했습니다.");
+	FILE_UPLOAD_ERROR("5001", HttpStatus.INTERNAL_SERVER_ERROR, "파일 서버 업로드에 실패했습니다."),
+
+	// Community Post 관련
+	NOT_FOUND_POST("6000", HttpStatus.NOT_FOUND, "해당 아이디의 게시글이 없습니다."),
+	NOT_FOUND_POST_IMAGE("6001", HttpStatus.NOT_FOUND, "해당 아이디의 이미지가 게시글에 없습니다."),;
+
+
 
 
 	private final String code;
