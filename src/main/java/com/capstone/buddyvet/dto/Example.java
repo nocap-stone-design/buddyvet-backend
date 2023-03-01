@@ -1,8 +1,11 @@
 package com.capstone.buddyvet.dto;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.capstone.buddyvet.domain.Post;
+import com.capstone.buddyvet.domain.PostImage;
 import com.capstone.buddyvet.domain.UserDiary;
 import com.capstone.buddyvet.domain.UserDiaryImage;
 import com.capstone.buddyvet.domain.enums.ImageState;
@@ -25,6 +28,10 @@ public class Example {
 			private Long diaryId;
 			private String thumbnail;
 
+			/**
+			 * TODO N+1 문제 생기는지 확인 필요.
+			 * 실제 구현 시에는 쿼리 단에서 ACTIVE 상태인 image 를 가져올 수 있도록 변경할것.
+			 */
 			public Info(UserDiary diary) {
 				this.diaryId = diary.getId();
 				this.thumbnail = diary.getUserDiaryImages().stream()
@@ -39,6 +46,85 @@ public class Example {
 			this.diaries = diaries.stream()
 				.map(Info::new)
 				.collect(Collectors.toList());
+		}
+	}
+
+	@Getter
+	public static class PostsResponse {
+		private List<Info> posts;
+
+		@Getter
+		static class Info {
+			private Long postId;
+			private String title;
+			private String thumbnail;
+
+			/**
+			 * TODO N+1 문제 생기는지 확인 필요.
+			 * 실제 구현 시에는 쿼리 단에서 ACTIVE 상태인 image 를 가져올 수 있도록 변경할것.
+			 */
+			Info(Post post) {
+				this.postId = post.getId();
+				this.title = post.getTitle();
+				this.thumbnail = post.getPostImages().stream()
+					.filter(image -> image.getState().equals(ImageState.ACTIVE))
+					.map(PostImage::getUrl)
+					.findFirst()
+					.orElse(null);
+			}
+		}
+
+		public PostsResponse(List<Post> posts) {
+			this.posts = posts.stream()
+				.map(Info::new)
+				.collect(Collectors.toList());
+		}
+	}
+
+	@Getter
+	@AllArgsConstructor
+	public static class PostDetailResponse {
+		private PostDto post;
+
+		@Getter
+		@AllArgsConstructor
+		@Builder
+		static class PostDto {
+			private Long id;
+			private String title;
+			private String content;
+			private List<Image> images;
+			private LocalDate date;
+			private Long author;
+
+			@Getter
+			static class Image {
+				private final Long id;
+				private final String url;
+
+				public Image(PostImage postImage) {
+					this.id = postImage.getId();
+					this.url = postImage.getUrl();
+				}
+			}
+		}
+
+		public static PostDetailResponse of(Post post) {
+			return new PostDetailResponse(
+				PostDto.builder()
+					.id(post.getId())
+					.title(post.getTitle())
+					.content(post.getContent())
+					.images(
+						post.getPostImages().stream()
+							.filter(postImage -> postImage.getState().equals(ImageState.ACTIVE))
+							.map(PostDto.Image::new)
+							.collect(Collectors.toList())
+					)
+					.date(post.getCreatedAt().toLocalDate())
+					.author(post.getUser().getId())
+					.build()
+			);
 		}
 	}
 }

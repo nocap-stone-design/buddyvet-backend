@@ -84,6 +84,9 @@ public class Diary {
 		}
 	}
 
+	/**
+	 * 사진 삭제 Request
+	 */
 	@Getter
 	public static class ImageRemoveRequest {
 		private Long imageId;

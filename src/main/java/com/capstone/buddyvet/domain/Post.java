@@ -19,6 +19,7 @@ import javax.persistence.OneToMany;
 
 import com.capstone.buddyvet.common.domain.BaseTimeEntity;
 import com.capstone.buddyvet.domain.enums.PostState;
+import com.capstone.buddyvet.dto.CommunityPost;
 
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -41,9 +42,6 @@ public class Post extends BaseTimeEntity {
 	@OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
 	private List<PostImage> postImages = new ArrayList<>();
 
-	@Column(nullable = false)
-	private LocalDate date;
-
 	@Column(nullable = false, columnDefinition = "VARCHAR(128)")
 	private String title;
 
@@ -55,9 +53,8 @@ public class Post extends BaseTimeEntity {
 	private PostState state;
 
 	@Builder
-	public Post(User user, LocalDate date, String title, String content) {
+	public Post(User user, String title, String content) {
 		this.user = user;
-		this.date = date;
 		this.title = title;
 		this.content = content;
 		this.state = PostState.ACTIVE;
@@ -71,5 +68,10 @@ public class Post extends BaseTimeEntity {
 	public void saveImage(PostImage postImage) {
 		this.postImages.add(postImage);
 		postImage.setPost(this);
+	}
+
+	public void update(CommunityPost.AddRequest request) {
+		this.title = request.getTitle();
+		this.content = request.getContent();
 	}
 }
