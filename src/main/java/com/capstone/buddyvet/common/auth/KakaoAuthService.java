@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.capstone.buddyvet.common.auth.client.KakaoUserApiClient;
-import com.capstone.buddyvet.common.auth.dto.KakaoUserInfo;
+import com.capstone.buddyvet.common.auth.dto.Kakao;
 import com.capstone.buddyvet.domain.enums.Provider;
 import com.capstone.buddyvet.dto.Auth.LoginRequest;
 import com.capstone.buddyvet.dto.Auth.SocialUserInfo;
@@ -33,12 +33,12 @@ public class KakaoAuthService {
 	 */
 	public Optional<SocialUserInfo> getUserInfo(LoginRequest loginRequest) {
 
-		KakaoUserInfo userInfo = kakaoUserApiClient.getUserInfo("Bearer " + loginRequest.getAccessToken());
+		Kakao.User user = kakaoUserApiClient.getUserInfo("Bearer " + loginRequest.getAccessToken());
 
 		return Optional.of(SocialUserInfo.builder()
-			.loginId(userInfo.getId())
+			.loginId(user.getId())
 			.providerType(Provider.KAKAO)
-			.nickname(userInfo.getKakaoAccount().getProfile().getNickname())
+			.nickname(user.getKakao_account().getProfile().getNickname())
 			.build());
 	}
 
@@ -46,7 +46,7 @@ public class KakaoAuthService {
 	 * 카카오 회원탈퇴
 	 * @param targetId 카카오 ID
 	 */
-	public void revoke(String targetId) {
-		kakaoUserApiClient.unlinkUser("KakaoAK " + adminKey, "user_id", targetId);
-	}
+	// public void revoke(String targetId) {
+	// 	kakaoUserApiClient.unlinkUser("KakaoAK " + adminKey, "user_id", targetId);
+	// }
 }
