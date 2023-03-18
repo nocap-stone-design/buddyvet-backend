@@ -16,6 +16,7 @@ public enum ErrorCode {
 	INVALID_ACCESS("1002", HttpStatus.BAD_REQUEST, "잘못된 접근입니다."),
 	INVALID_TOKEN("1003", HttpStatus.UNAUTHORIZED, "유효하지 않은 토큰입니다."),
 	INVALID_USER("1004", HttpStatus.UNAUTHORIZED, "유효하지 않은 사용자입니다."),
+	NOT_ACTIVATED_USER("1004", HttpStatus.BAD_REQUEST, "활동 중이지 않은 사용자입니다."),
 
 
 	// User 관련
