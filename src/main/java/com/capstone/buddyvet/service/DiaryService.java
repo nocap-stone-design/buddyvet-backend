@@ -36,7 +36,7 @@ public class DiaryService {
 	private final S3Uploader s3Uploader;
 
 	public DiariesResponse getDiaries() {
-		return new DiariesResponse(authService.getCurrentUser().getUserDiaries());
+		return new DiariesResponse(authService.getCurrentActiveUser().getUserDiaries());
 	}
 
 	public DetailResponse getDiary(Long diaryId) {
@@ -46,7 +46,7 @@ public class DiaryService {
 
 	@Transactional
 	public AddResponse addDiary(AddRequest request) {
-		UserDiary savedDiary = diaryRepository.save(request.toEntity(authService.getCurrentUser()));
+		UserDiary savedDiary = diaryRepository.save(request.toEntity(authService.getCurrentActiveUser()));
 		return new AddResponse(savedDiary.getId());
 	}
 
@@ -66,7 +66,7 @@ public class DiaryService {
 	public void uploadImage(Long diaryId, List<MultipartFile> files) {
 		UserDiary diary = getDiaryAndValidate(diaryId);
 
-		User currentUser = authService.getCurrentUser();
+		User currentUser = authService.getCurrentActiveUser();
 		List<String> urls = s3Uploader.uploadFiles(files, currentUser.getId().toString());
 
 		for (String url : urls) {
@@ -90,7 +90,7 @@ public class DiaryService {
 	 *             현재 유저의 id 와 일기를 작성한 유저의 id 가 일치하지 않으면 exception
 	 */
 	private void validateDiaryUser(UserDiary diary) {
-		if (diary.getUser().getId() != authService.getCurrentUser().getId()) {
+		if (diary.getUser().getId() != authService.getCurrentActiveUser().getId()) {
 			throw new RestApiException(ErrorCode.INVALID_ACCESS);
 		}
 	}

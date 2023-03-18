@@ -45,7 +45,7 @@ public class PostService {
 
 	@Transactional
 	public AddResponse addPost(AddRequest request) {
-		Post savedPost = postRepository.save(request.toEntity(authService.getCurrentUser()));
+		Post savedPost = postRepository.save(request.toEntity(authService.getCurrentActiveUser()));
 		return new AddResponse(savedPost.getId());
 	}
 
@@ -65,7 +65,7 @@ public class PostService {
 	public void uploadImage(Long postId, List<MultipartFile> files) {
 		Post post = getPostAndValidate(postId);
 
-		User currentUser = authService.getCurrentUser();
+		User currentUser = authService.getCurrentActiveUser();
 		List<String> urls = s3Uploader.uploadFiles(files, currentUser.getId().toString());
 
 		for (String url : urls) {
@@ -89,7 +89,7 @@ public class PostService {
 	 *             현재 유저의 id 와 게시글을 작성한 유저의 id 가 일치하지 않으면 exception
 	 */
 	private void validatePostUser(Post post) {
-		if (post.getUser().getId() != authService.getCurrentUser().getId()) {
+		if (post.getUser().getId() != authService.getCurrentActiveUser().getId()) {
 			throw new RestApiException(ErrorCode.INVALID_ACCESS);
 		}
 	}

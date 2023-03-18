@@ -4,10 +4,6 @@ import java.util.Optional;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,8 +17,8 @@ import com.capstone.buddyvet.dto.Auth.JwtResponse;
 import com.capstone.buddyvet.dto.Auth.LoginRequest;
 import com.capstone.buddyvet.dto.Auth.SocialUserInfo;
 import com.capstone.buddyvet.repository.UserRepository;
-import com.capstone.buddyvet.security.SecurityUtil;
-import com.capstone.buddyvet.security.TokenProvider;
+import com.capstone.buddyvet.security.config.Properties;
+import com.capstone.buddyvet.security.provider.JwtTokenProvider;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -35,8 +31,8 @@ public class AuthService {
 	private final UserRepository userRepository;
 	private final UserService userService;
 	private final KakaoAuthService kakaoAuthService;
-	private final TokenProvider tokenProvider;
-	private final AuthenticationManagerBuilder authenticationManagerBuilder;
+	private final JwtTokenProvider tokenProvider;
+	private final Properties properties;
 
 	/**
 	 * 로그인/회원가입
@@ -52,7 +48,7 @@ public class AuthService {
 			userInfo.getLoginId(), UserState.ACTIVE);
 
 		User user = findUser.orElseGet(() -> userService.registerUser(userInfo));
-		String jwt = createJwt(user.getId().toString());
+		String jwt = tokenProvider.create(user.getSocialId(), user.getState(), properties.getSecret());
 
 		if (findUser.isEmpty()) {
 			return ResponseEntity.status(HttpStatus.CREATED)
@@ -62,30 +58,18 @@ public class AuthService {
 	}
 
 	/**
-	 * 유저 ID 에 해당하는 jwt 생성
-	 * @param userId
-	 * @return jwt
-	 */
-	private String createJwt(String userId) {
-
-		UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
-			userId, "password");
-
-		// loadUserByUsername 실행
-		Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
-		SecurityContextHolder.getContext().setAuthentication(authentication);
-
-		return tokenProvider.createToken(authentication);
-	}
-
-	/**
 	 * 현재 로그인 유저 반환
-	 * @return 현재 jwt 로 SecurityContext 에 저장된 id 를 이용해 유저 엔티티 조회 후 반환
+	 * @return 현재 jwt 로 SecurityContext 에 저장된 social id 를 이용해 유저 엔티티 조회 후 반환
 	 * 없을 시 LOAD_USER_ERROR exception
 	 */
-	public User getCurrentUser() {
-		return SecurityUtil.getCurrentUsername()
-			.flatMap(id -> userRepository.findById(Long.valueOf(id)))
+	public User getCurrentActiveUser() {
+		User user = userRepository.findBySocialId(tokenProvider.getUsername())
 			.orElseThrow(() -> new RestApiException(ErrorCode.LOAD_USER_ERROR));
+
+		if (user.getState() != UserState.ACTIVE) {
+			throw new RestApiException(ErrorCode.NOT_ACTIVATED_USER);
+		}
+
+		return user;
 	}
 }
