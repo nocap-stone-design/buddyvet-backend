@@ -40,7 +40,7 @@ public class User extends BaseTimeEntity implements UserDetails {
 	private String nickname;
 
 	@Column(columnDefinition = "TEXT")
-	private String description;
+	private String intro;
 
 	@Enumerated(EnumType.STRING)
 	@Column(nullable = false, columnDefinition = "CHAR(16)")
