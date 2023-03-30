@@ -17,8 +17,8 @@ import com.capstone.buddyvet.common.dto.ResponseDto;
 import com.capstone.buddyvet.dto.Diary.AddRequest;
 import com.capstone.buddyvet.dto.Diary.AddResponse;
 import com.capstone.buddyvet.dto.Diary.DetailResponse;
+import com.capstone.buddyvet.dto.Diary.DiariesResponse;
 import com.capstone.buddyvet.dto.Diary.ImageRemoveRequest;
-import com.capstone.buddyvet.dto.Example.DiariesResponse;
 import com.capstone.buddyvet.service.DiaryService;
 
 import lombok.RequiredArgsConstructor;
@@ -34,12 +34,13 @@ public class DiaryController {
 
 	/**
 	 * 일기 목록 조회
-	 * @return 작성된 일기 목록
-	 * TODO Ex 에서 실제 구현으로 변경
+	 * @param year    조회할 년도
+	 * @param month    조회할 월
+	 * @return 해당 년월에 작성된 일기 목록
 	 */
 	@GetMapping
-	public ResponseDto<DiariesResponse> diaryListEx() {
-		return new ResponseDto<>(diaryService.getDiaries());
+	public ResponseDto<DiariesResponse> diaryList(@RequestParam String year, @RequestParam String month) {
+		return new ResponseDto<>(diaryService.getDiaries(year, month));
 	}
 
 	/**

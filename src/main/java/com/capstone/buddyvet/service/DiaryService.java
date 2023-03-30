@@ -1,5 +1,8 @@
 package com.capstone.buddyvet.service;
 
+import java.time.LocalDate;
+import java.time.YearMonth;
+import java.time.format.DateTimeParseException;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
@@ -17,9 +20,10 @@ import com.capstone.buddyvet.domain.enums.ImageState;
 import com.capstone.buddyvet.dto.Diary.AddRequest;
 import com.capstone.buddyvet.dto.Diary.AddResponse;
 import com.capstone.buddyvet.dto.Diary.DetailResponse;
-import com.capstone.buddyvet.dto.Example.DiariesResponse;
+import com.capstone.buddyvet.dto.Diary.DiariesResponse;
 import com.capstone.buddyvet.repository.DiaryImageRepository;
 import com.capstone.buddyvet.repository.DiaryRepository;
+import com.capstone.buddyvet.repository.UserDiaryRepository;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -32,11 +36,26 @@ public class DiaryService {
 
 	private final AuthService authService;
 	private final DiaryRepository diaryRepository;
+	private final UserDiaryRepository userDiaryRepository;
 	private final DiaryImageRepository diaryImageRepository;
 	private final S3Uploader s3Uploader;
 
-	public DiariesResponse getDiaries() {
-		return new DiariesResponse(authService.getCurrentActiveUser().getUserDiaries());
+	public DiariesResponse getDiaries(String year, String month) {
+		try {
+			LocalDate date = LocalDate.parse(year + "-" + month + "-01");
+
+			YearMonth yearMonth = YearMonth.from(date);
+			LocalDate startDate = yearMonth.atDay(1);
+			LocalDate endDate = yearMonth.atEndOfMonth();
+
+			User user = authService.getCurrentActiveUser();
+
+			List<UserDiary> diaries = userDiaryRepository.findAllByUserAndStateAndDateBetween(user, DiaryState.ACTIVE, startDate, endDate);
+
+			return new DiariesResponse(startDate, diaries);
+		} catch (DateTimeParseException e) {
+			throw new RestApiException(ErrorCode.INVALID_DATE_FORMAT);
+		}
 	}
 
 	public DetailResponse getDiary(Long diaryId) {
