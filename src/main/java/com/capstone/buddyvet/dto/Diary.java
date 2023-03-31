@@ -17,6 +17,47 @@ import lombok.Getter;
 public class Diary {
 
 	/**
+	 * 목록 조회 Response
+	 */
+	@Getter
+	public static class DiariesResponse {
+		private String year;
+		private String month;
+		private List<Info> diaries;
+
+		@Getter
+		@AllArgsConstructor
+		@Builder
+		public static class Info {
+			private int day;
+			private Long diaryId;
+			private String thumbnail;
+
+			/**
+			 * TODO N+1 문제 생기는지 확인 필요.
+			 * 쿼리 단에서 ACTIVE 상태인 image 를 가져올 수 있도록 변경할것.
+			 */
+			public Info(UserDiary diary) {
+				this.day = diary.getDate().getDayOfMonth();
+				this.diaryId = diary.getId();
+				this.thumbnail = diary.getUserDiaryImages().stream()
+					.filter(image -> image.getState().equals(ImageState.ACTIVE))
+					.map(UserDiaryImage::getUrl)
+					.findFirst()
+					.orElse(null);
+			}
+		}
+
+		public DiariesResponse(LocalDate date, List<UserDiary> diaries) {
+			this.year = Integer.toString(date.getYear());
+			this.month = Integer.toString(date.getMonthValue());
+			this.diaries = diaries.stream()
+				.map(Info::new)
+				.collect(Collectors.toList());
+		}
+	}
+
+	/**
 	 * 신규 작성 Request
 	 */
 	@Getter
