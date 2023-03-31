@@ -12,10 +12,10 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.capstone.buddyvet.common.dto.ResponseDto;
-import com.capstone.buddyvet.dto.Buddy.SaveRequest;
-import com.capstone.buddyvet.dto.Buddy.SaveResponse;
-import com.capstone.buddyvet.dto.Buddy.BuddiesResponse;
-import com.capstone.buddyvet.dto.Buddy.DetailResponse;
+import com.capstone.buddyvet.dto.Buddies.SaveRequest;
+import com.capstone.buddyvet.dto.Buddies.SaveResponse;
+import com.capstone.buddyvet.dto.Buddies.BuddiesResponse;
+import com.capstone.buddyvet.dto.Buddies.DetailResponse;
 import com.capstone.buddyvet.service.BuddyService;
 
 import lombok.RequiredArgsConstructor;
@@ -74,7 +74,8 @@ public class BuddyController {
 	 */
 	@DeleteMapping("/{buddyId}")
 	public ResponseDto buddyRemove(@PathVariable Long buddyId) {
-		return new ResponseDto(buddyService.removeBuddy(buddyId));
+		buddyService.removeBuddy(buddyId);
+		return new ResponseDto(null);
 	}
 
 	/**
@@ -85,6 +86,7 @@ public class BuddyController {
 	 */
 	@PostMapping("/{buddyId}/image")
 	public ResponseDto imageUpload(@PathVariable Long buddyId, @RequestParam("file") MultipartFile file) {
+		buddyService.uploadImage(buddyId, file);
 		return new ResponseDto(null);
 	}
 }

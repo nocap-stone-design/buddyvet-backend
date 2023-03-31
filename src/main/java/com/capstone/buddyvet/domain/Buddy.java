@@ -1,5 +1,6 @@
 package com.capstone.buddyvet.domain;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import javax.persistence.Column;
@@ -14,9 +15,13 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
 import com.capstone.buddyvet.common.domain.BaseTimeEntity;
+import com.capstone.buddyvet.domain.enums.DiaryState;
 import com.capstone.buddyvet.domain.enums.Gender;
+import com.capstone.buddyvet.dto.Buddies;
+import com.capstone.buddyvet.dto.Diary;
 
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -43,7 +48,7 @@ public class Buddy extends BaseTimeEntity {
 	private String profile;
 
 	@Column(nullable = false)
-	private LocalDateTime birthday;
+	private LocalDate birthday;
 
 	@Enumerated(EnumType.STRING)
 	@Column(nullable = false, columnDefinition = "CHAR(1)")
@@ -53,8 +58,31 @@ public class Buddy extends BaseTimeEntity {
 	private boolean neutered;
 
 	@Column(nullable = false)
-	private LocalDateTime adoptedAt;
+	private LocalDate adoptedAt;
 
 	@Column(nullable = false, columnDefinition = "TINYINT(1)")
 	private boolean isActivated;
+
+	@Builder
+	public Buddy(User user, BuddyBreed buddyBreed, String name, String profile, LocalDate birthday, Gender gender,
+		boolean neutered, LocalDate adoptedAt) {
+		this.user = user;
+		this.buddyBreed = buddyBreed;
+		this.name = name;
+		this.profile = profile;
+		this.birthday = birthday;
+		this.gender = gender;
+		this.neutered = neutered;
+		this.isActivated = true;
+		this.adoptedAt = adoptedAt;
+	}
+
+	//==비즈니스 로직==//
+	public void delete() {
+		this.isActivated = false;
+	}
+
+	public void saveImage(String url) {
+		this.profile = url;
+	}
 }
