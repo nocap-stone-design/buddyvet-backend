@@ -18,6 +18,10 @@ public enum ErrorCode {
 	INVALID_USER("1004", HttpStatus.UNAUTHORIZED, "유효하지 않은 사용자입니다."),
 	NOT_ACTIVATED_USER("1004", HttpStatus.BAD_REQUEST, "활동 중이지 않은 사용자입니다."),
 
+	// Buddy 관련
+	INVALID_BREED("2000", HttpStatus.BAD_REQUEST, "아이디에 해당하는 품종이 없습니다."),
+	INVALID_BUDDY("2001", HttpStatus.BAD_REQUEST, "해당 버디가 존재하지 않습니다."),
+
 
 	// User 관련
 	DEACTIVATED_USER("3000", HttpStatus.BAD_REQUEST, "이미 탈퇴한 회원입니다."),

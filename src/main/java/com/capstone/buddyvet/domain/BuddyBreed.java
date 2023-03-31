@@ -3,6 +3,7 @@ package com.capstone.buddyvet.domain;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -20,7 +21,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class BuddyBreed {
+public class BuddyBreed {	// 품종
 	@Id
 	@Column(name = "buddy_breed_id")
 	@GeneratedValue(strategy = GenerationType.IDENTITY)

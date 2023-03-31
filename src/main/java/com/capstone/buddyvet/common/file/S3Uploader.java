@@ -55,6 +55,16 @@ public class S3Uploader {
 		}
 	}
 
+	public String uploadSingleFile(MultipartFile file, String directory) {
+		try {
+			File convertFile = convert(file)
+				.orElseThrow(() -> new RestApiException(ErrorCode.FILE_CONVERT_ERROR));
+			return upload(convertFile, directory);
+		} catch (IOException e) {
+			throw new RestApiException(ErrorCode.FILE_UPLOAD_ERROR);
+		}
+	}
+
 	private Optional<File> convert(MultipartFile file) throws IOException {
 		String originalFilename = file.getOriginalFilename();
 		String extension = originalFilename.substring(originalFilename.lastIndexOf("."));
@@ -72,7 +82,7 @@ public class S3Uploader {
 		}
 	}
 
-	private String upload(File uploadFile, String dirName) {
+	public String upload(File uploadFile, String dirName) {
 		String fileName = bucketDirectory + "/" + dirName + "/" + uploadFile.getName();
 		String uploadImageUrl = putS3(uploadFile, fileName);
 		removeNewFile(uploadFile);
