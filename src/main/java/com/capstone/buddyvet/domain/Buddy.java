@@ -61,7 +61,7 @@ public class Buddy extends BaseTimeEntity {
 	private LocalDate adoptedAt;
 
 	@Column(nullable = false, columnDefinition = "TINYINT(1)")
-	private boolean isActivated;
+	private boolean activated;
 
 	@Builder
 	public Buddy(User user, BuddyBreed buddyBreed, String name, String profile, LocalDate birthday, Gender gender,
@@ -73,13 +73,13 @@ public class Buddy extends BaseTimeEntity {
 		this.birthday = birthday;
 		this.gender = gender;
 		this.neutered = neutered;
-		this.isActivated = true;
+		this.activated = true;
 		this.adoptedAt = adoptedAt;
 	}
 
 	//==비즈니스 로직==//
 	public void delete() {
-		this.isActivated = false;
+		this.activated = false;
 	}
 
 	public void saveImage(String url) {
