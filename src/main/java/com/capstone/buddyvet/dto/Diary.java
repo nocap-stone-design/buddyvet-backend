@@ -130,6 +130,6 @@ public class Diary {
 	 */
 	@Getter
 	public static class ImageRemoveRequest {
-		private Long imageId;
+		private List<Long> imageIds;
 	}
 }

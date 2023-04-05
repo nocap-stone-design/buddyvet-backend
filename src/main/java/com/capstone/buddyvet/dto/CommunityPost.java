@@ -47,6 +47,6 @@ public class CommunityPost {
 	 */
 	@Getter
 	public static class ImageRemoveRequest {
-		private Long imageId;
+		private List<Long> imageIds;
 	}
 }
