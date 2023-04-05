@@ -50,7 +50,8 @@ public class DiaryService {
 
 			User user = authService.getCurrentActiveUser();
 
-			List<UserDiary> diaries = userDiaryRepository.findAllByUserAndStateAndDateBetween(user, DiaryState.ACTIVE, startDate, endDate);
+			List<UserDiary> diaries = userDiaryRepository.findAllByUserAndStateAndDateBetween(user, DiaryState.ACTIVE,
+				startDate, endDate);
 
 			return new DiariesResponse(startDate, diaries);
 		} catch (DateTimeParseException e) {
@@ -94,13 +95,15 @@ public class DiaryService {
 	}
 
 	@Transactional
-	public void removeImage(Long diaryId, Long imageId) {
+	public void removeImages(Long diaryId, List<Long> imageIds) {
 		UserDiary diary = getDiaryAndValidate(diaryId);
-		UserDiaryImage diaryImage = diaryImageRepository.findByIdAndState(imageId, ImageState.ACTIVE)
-			.orElseThrow(() -> new RestApiException(ErrorCode.NOT_FOUND_DIARY_IMAGE));
+		List<UserDiaryImage> diaryImages = diaryImageRepository.findAllByIdInAndState(imageIds, ImageState.ACTIVE);
 
-		validateDiaryImageUser(diary, diaryImage);
-		diaryImage.delete();
+		if (imageIds.size() != diaryImages.size()) {
+			throw new RestApiException(ErrorCode.INVALID_IMAGE_IDS);
+		}
+
+		validateAndDeleteDiaryImage(diary, diaryImages);
 	}
 
 	/**
@@ -118,12 +121,15 @@ public class DiaryService {
 	 * 해당 사진이 파라미터로 전달된 일기글에 속해있는지 검증
 	 * TODO fetch join 으로 쿼리 단에서 해결할 수 있는지 확인하기
 	 * @param diary 검증할 일기
-	 * @param diaryImage 검증할 일기 사진
+	 * @param diaryImages 검증할 일기 사진
 	 *                  파라미터로 전송된 일기글 id 와 사진이 속해있는 일기글 id 가 일치하지 않으면 exception
 	 */
-	private void validateDiaryImageUser(UserDiary diary, UserDiaryImage diaryImage) {
-		if (diaryImage.getUserDiary().getId() != diary.getId()) {
-			throw new RestApiException(ErrorCode.INVALID_ACCESS);
+	private void validateAndDeleteDiaryImage(UserDiary diary, List<UserDiaryImage> diaryImages) {
+		for (UserDiaryImage diaryImage : diaryImages) {
+			if (!diary.getId().equals(diaryImage.getUserDiary().getId())) {
+				throw new RestApiException(ErrorCode.INVALID_ACCESS);
+			}
+			diaryImage.delete();
 		}
 	}
 

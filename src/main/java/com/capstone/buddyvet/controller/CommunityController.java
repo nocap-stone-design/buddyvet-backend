@@ -19,7 +19,7 @@ import com.capstone.buddyvet.dto.CommunityPost.AddResponse;
 import com.capstone.buddyvet.dto.CommunityPost.ImageRemoveRequest;
 import com.capstone.buddyvet.dto.Example.PostDetailResponse;
 import com.capstone.buddyvet.dto.Example.PostsResponse;
-import com.capstone.buddyvet.service.PostService;
+import com.capstone.buddyvet.service.CommunityService;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -28,9 +28,9 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/community")
-public class PostController {
+public class CommunityController {
 
-	private final PostService postService;
+	private final CommunityService communityService;
 
 	/**
 	 * 게시글 목록 조회
@@ -39,7 +39,7 @@ public class PostController {
 	 */
 	@GetMapping
 	public ResponseDto<PostsResponse> postListEx() {
-		return new ResponseDto<>(postService.getPosts());
+		return new ResponseDto<>(communityService.getPosts());
 	}
 
 	/**
@@ -50,7 +50,7 @@ public class PostController {
 	 */
 	@GetMapping("/{postId}")
 	public ResponseDto<PostDetailResponse> postDetailsEx(@PathVariable Long postId) {
-		return new ResponseDto<>(postService.getPost(postId));
+		return new ResponseDto<>(communityService.getPost(postId));
 	}
 
 	/**
@@ -60,7 +60,7 @@ public class PostController {
 	 */
 	@PostMapping
 	public ResponseDto<AddResponse> postAdd(@RequestBody AddRequest request) {
-		return new ResponseDto<>(postService.addPost(request));
+		return new ResponseDto<>(communityService.addPost(request));
 	}
 
 	/**
@@ -71,7 +71,7 @@ public class PostController {
 	 */
 	@PutMapping("/{postId}")
 	public ResponseDto postModify(@PathVariable Long postId, @RequestBody AddRequest request) {
-		postService.modifyPost(postId, request);
+		communityService.modifyPost(postId, request);
 		return new ResponseDto(null);
 	}
 
@@ -82,7 +82,7 @@ public class PostController {
 	 */
 	@DeleteMapping("/{postId}")
 	public ResponseDto postRemove(@PathVariable Long postId) {
-		postService.removePost(postId);
+		communityService.removePost(postId);
 		return new ResponseDto(null);
 	}
 
@@ -95,7 +95,7 @@ public class PostController {
 	@PostMapping("/{postId}/image")
 	public ResponseDto imageUpload(@PathVariable Long postId, @RequestParam("image") List<MultipartFile> files) {
 		log.info(files.get(0).getOriginalFilename());
-		postService.uploadImage(postId, files);
+		communityService.uploadImage(postId, files);
 		return new ResponseDto(null);
 	}
 
@@ -107,7 +107,7 @@ public class PostController {
 	 */
 	@DeleteMapping("/{postId}/image")
 	public ResponseDto imageRemove(@PathVariable Long postId, @RequestBody ImageRemoveRequest request) {
-		postService.removeImage(postId, request.getImageId());
+		communityService.removeImages(postId, request.getImageIds());
 		return new ResponseDto(null);
 	}
 }

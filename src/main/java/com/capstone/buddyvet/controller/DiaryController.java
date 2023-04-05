@@ -107,7 +107,7 @@ public class DiaryController {
 	 */
 	@DeleteMapping("/{diaryId}/image")
 	public ResponseDto imageRemove(@PathVariable Long diaryId, @RequestBody ImageRemoveRequest request) {
-		diaryService.removeImage(diaryId, request.getImageId());
+		diaryService.removeImages(diaryId, request.getImageIds());
 		return new ResponseDto(null);
 	}
 }

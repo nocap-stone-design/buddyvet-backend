@@ -28,7 +28,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
-public class PostService {
+public class CommunityService {
 	private final AuthService authService;
 	private final PostRepository postRepository;
 	private final PostImageRepository postImageRepository;
@@ -74,13 +74,15 @@ public class PostService {
 	}
 
 	@Transactional
-	public void removeImage(Long postId, Long imageId) {
+	public void removeImages(Long postId, List<Long> imageIds) {
 		Post post = getPostAndValidate(postId);
-		PostImage postImage = postImageRepository.findByIdAndState(imageId, ImageState.ACTIVE)
-			.orElseThrow(() -> new RestApiException(ErrorCode.NOT_FOUND_POST_IMAGE));
+		List<PostImage> postImages = postImageRepository.findAllByIdInAndState(imageIds, ImageState.ACTIVE);
 
-		validatePostImageUser(post, postImage);
-		postImage.delete();
+		if (imageIds.size() != postImages.size()) {
+			throw new RestApiException(ErrorCode.INVALID_IMAGE_IDS);
+		}
+
+		validateAndDeletePostImage(post, postImages);
 	}
 
 	/**
@@ -94,9 +96,12 @@ public class PostService {
 		}
 	}
 
-	private void validatePostImageUser(Post post, PostImage postImage) {
-		if (postImage.getPost().getId() != post.getId()) {
-			throw new RestApiException(ErrorCode.INVALID_ACCESS);
+	private void validateAndDeletePostImage(Post post, List<PostImage> postImages) {
+		for (PostImage postImage : postImages) {
+			if (!post.getId().equals(postImage.getPost().getId())) {
+				throw new RestApiException(ErrorCode.INVALID_ACCESS);
+			}
+			postImage.delete();
 		}
 	}
 

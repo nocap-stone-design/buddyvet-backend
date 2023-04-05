@@ -30,6 +30,7 @@ public enum ErrorCode {
 	NOT_FOUND_DIARY("4000", HttpStatus.NOT_FOUND, "해당 아이디의 일기가 없습니다."),
 	NOT_FOUND_DIARY_IMAGE("4001", HttpStatus.NOT_FOUND, "해당 아이디의 이미지가 일기에 없습니다."),
 	INVALID_DATE_FORMAT("4002", HttpStatus.BAD_REQUEST, "잘못된 날짜 형식입니다."),
+	INVALID_IMAGE_IDS("4003", HttpStatus.BAD_REQUEST, "잘못된 아이디의 이미지입니다."),
 
 	// File 관련
 	FILE_CONVERT_ERROR("5000", HttpStatus.INTERNAL_SERVER_ERROR, "파일 변환에 실패했습니다."),
