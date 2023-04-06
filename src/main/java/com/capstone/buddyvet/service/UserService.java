@@ -5,6 +5,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.capstone.buddyvet.domain.User;
 import com.capstone.buddyvet.dto.Auth.SocialUserInfo;
+import com.capstone.buddyvet.dto.Users;
 import com.capstone.buddyvet.repository.UserRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -16,6 +17,7 @@ import lombok.extern.slf4j.Slf4j;
 @Transactional(readOnly = true)
 public class UserService {
 
+	private final AuthService authService;
 	private final UserRepository userRepository;
 
 	/**
@@ -29,5 +31,10 @@ public class UserService {
 			.socialId(userInfo.getLoginId())
 				.nickname(userInfo.getNickname())
 			.build());
+	}
+
+	public Users.DetailResponse getUser() {
+		User user = authService.getCurrentActiveUser();
+		return new Users.DetailResponse(user);
 	}
 }
