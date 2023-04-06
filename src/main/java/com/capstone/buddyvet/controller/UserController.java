@@ -1,6 +1,8 @@
 package com.capstone.buddyvet.controller;
 
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -25,5 +27,16 @@ public class UserController {
 	@GetMapping
 	public ResponseDto<Users.DetailResponse> userDetail() {
 		return new ResponseDto<>(userService.getUser());
+	}
+
+	/**
+	 * 유저 닉네임 입력 API
+	 * @param request 설정할 닉네임
+	 * @return void
+	 */
+	@PostMapping("/nickname")
+	public ResponseDto userNicknameAdd(@RequestBody Users.AddNicknameRequest request) {
+		userService.addUserNickname(request);
+		return new ResponseDto(null);
 	}
 }

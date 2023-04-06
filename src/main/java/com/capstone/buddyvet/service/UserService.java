@@ -37,4 +37,10 @@ public class UserService {
 		User user = authService.getCurrentActiveUser();
 		return new Users.DetailResponse(user);
 	}
+
+	@Transactional
+	public void addUserNickname(Users.AddNicknameRequest request) {
+		User user = authService.getCurrentActiveUser();
+		user.setNickname(request.getNickname());
+	}
 }

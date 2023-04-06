@@ -119,4 +119,8 @@ public class User extends BaseTimeEntity implements UserDetails {
 	public boolean isEnabled() {
 		return false;
 	}
+
+	public void setNickname(String nickname) {
+		this.nickname = nickname;
+	}
 }
