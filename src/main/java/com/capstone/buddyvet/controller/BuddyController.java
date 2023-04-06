@@ -85,7 +85,7 @@ public class BuddyController {
 	 * @return 성공 시 null
 	 */
 	@PostMapping("/{buddyId}/image")
-	public ResponseDto imageUpload(@PathVariable Long buddyId, @RequestParam("file") MultipartFile file) {
+	public ResponseDto imageUpload(@PathVariable Long buddyId, @RequestParam("image") MultipartFile file) {
 		buddyService.uploadImage(buddyId, file);
 		return new ResponseDto(null);
 	}

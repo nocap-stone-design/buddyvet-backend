@@ -62,6 +62,8 @@ public class User extends BaseTimeEntity implements UserDetails {
 	@Column(nullable = false, columnDefinition = "TINYINT(1)")
 	private boolean isAllowPush;
 
+	private String profileImageUrl;
+
 	@OneToMany(mappedBy = "user")
 	private List<Buddy> buddies = new ArrayList<>();
 
@@ -118,5 +120,13 @@ public class User extends BaseTimeEntity implements UserDetails {
 	@Override
 	public boolean isEnabled() {
 		return false;
+	}
+
+	public void setNickname(String nickname) {
+		this.nickname = nickname;
+	}
+
+	public void setProfileImageUrl(String profileImageUrl) {
+		this.profileImageUrl = profileImageUrl;
 	}
 }
