@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import com.capstone.buddyvet.domain.Buddy;
-import com.capstone.buddyvet.domain.BuddyBreed;
 import com.capstone.buddyvet.domain.User;
 import com.capstone.buddyvet.domain.enums.Gender;
 import com.capstone.buddyvet.domain.enums.Kind;
@@ -25,16 +24,15 @@ public class Buddies {
 	public static class SaveRequest {
 		private Kind kind;
 		private String name;
-		private Long breedId;
 		private LocalDate birthday;
 		private LocalDate adoptDay;
 		private Boolean isNeutered;
 		private Gender gender;
 
-		public Buddy toEntity(User user, BuddyBreed breed) {
+		public Buddy toEntity(User user) {
 			return Buddy.builder()
 				.user(user)
-				.buddyBreed(breed)
+				.kind(kind)
 				.name(name)
 				.birthday(birthday)
 				.adoptedAt(adoptDay)
@@ -71,7 +69,7 @@ public class Buddies {
 
 			public Info(Buddy buddy) {
 				this.id = buddy.getId();
-				this.kind = buddy.getBuddyBreed().getBuddyKind().getKind();
+				this.kind = buddy.getKind();
 				this.name = buddy.getName();
 				this.gender = buddy.getGender();
 				this.profile = buddy.getProfile();
@@ -106,7 +104,6 @@ public class Buddies {
 			private Kind kind;
 			private String name;
 			private String profile;
-			private String breed;
 			private LocalDate birthday;
 			private LocalDate adoptDay;
 			private Boolean isNeutered;
@@ -116,13 +113,13 @@ public class Buddies {
 		public static DetailResponse of(Buddy buddy) {
 			return new DetailResponse(
 				Info.builder()
-					.kind(buddy.getBuddyBreed().getBuddyKind().getKind())
+					.kind(buddy.getKind())
 					.name(buddy.getName())
 					.profile(buddy.getProfile())
-					.breed(buddy.getBuddyBreed().getName())
 					.birthday(buddy.getBirthday())
 					.adoptDay(buddy.getAdoptedAt())
 					.isNeutered(buddy.isNeutered())
+					.gender(buddy.getGender())
 					.build()
 			);
 		}

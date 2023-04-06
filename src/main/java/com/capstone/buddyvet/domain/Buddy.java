@@ -1,7 +1,6 @@
 package com.capstone.buddyvet.domain;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -15,10 +14,9 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
 import com.capstone.buddyvet.common.domain.BaseTimeEntity;
-import com.capstone.buddyvet.domain.enums.DiaryState;
 import com.capstone.buddyvet.domain.enums.Gender;
+import com.capstone.buddyvet.domain.enums.Kind;
 import com.capstone.buddyvet.dto.Buddies;
-import com.capstone.buddyvet.dto.Diary;
 
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -37,10 +35,6 @@ public class Buddy extends BaseTimeEntity {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "user_id")
 	private User user;
-
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "buddy_breed_id")
-	private BuddyBreed buddyBreed;
 
 	@Column(nullable = false, columnDefinition = "VARCHAR(128)")
 	private String name;
@@ -63,11 +57,14 @@ public class Buddy extends BaseTimeEntity {
 	@Column(nullable = false, columnDefinition = "TINYINT(1)")
 	private boolean activated;
 
+	@Enumerated(EnumType.STRING)
+	@Column(nullable = false, columnDefinition = "CHAR(1)")
+	private Kind kind;
+
 	@Builder
-	public Buddy(User user, BuddyBreed buddyBreed, String name, String profile, LocalDate birthday, Gender gender,
-		boolean neutered, LocalDate adoptedAt) {
+	public Buddy(User user, String name, String profile, LocalDate birthday, Gender gender,
+		boolean neutered, LocalDate adoptedAt, Kind kind) {
 		this.user = user;
-		this.buddyBreed = buddyBreed;
 		this.name = name;
 		this.profile = profile;
 		this.birthday = birthday;
@@ -75,6 +72,7 @@ public class Buddy extends BaseTimeEntity {
 		this.neutered = neutered;
 		this.activated = true;
 		this.adoptedAt = adoptedAt;
+		this.kind = kind;
 	}
 
 	//==비즈니스 로직==//
@@ -84,5 +82,14 @@ public class Buddy extends BaseTimeEntity {
 
 	public void saveImage(String url) {
 		this.profile = url;
+	}
+
+	public void modify(Buddies.SaveRequest request) {
+		if (request.getKind() != null) this.kind = request.getKind();
+		if (request.getName() != null) this.name = request.getName();
+		if (request.getBirthday() != null) this.birthday = request.getBirthday();
+		if (request.getAdoptDay() != null) this.adoptedAt = request.getAdoptDay();
+		if (request.getIsNeutered() != null) this.neutered = request.getIsNeutered();
+		if (request.getGender() != null) this.gender = request.getGender();
 	}
 }
