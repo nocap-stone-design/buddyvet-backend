@@ -40,6 +40,9 @@ public class Post extends BaseTimeEntity {
 	private User user;
 
 	@OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
+	private List<Reply> replies = new ArrayList<>();
+
+	@OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
 	private List<PostImage> postImages = new ArrayList<>();
 
 	@Column(nullable = false, columnDefinition = "VARCHAR(128)")
@@ -63,6 +66,11 @@ public class Post extends BaseTimeEntity {
 	//==비즈니스 로직==//
 	public void delete() {
 		this.state = PostState.DELETED;
+	}
+
+	public void saveReply(Reply reply) {
+		this.replies.add(reply);
+		reply.setPost(this);
 	}
 
 	public void saveImage(PostImage postImage) {
