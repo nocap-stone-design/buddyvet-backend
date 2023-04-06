@@ -10,13 +10,11 @@ import com.capstone.buddyvet.common.enums.ErrorCode;
 import com.capstone.buddyvet.common.exception.RestApiException;
 import com.capstone.buddyvet.common.file.S3Uploader;
 import com.capstone.buddyvet.domain.Buddy;
-import com.capstone.buddyvet.domain.BuddyBreed;
 import com.capstone.buddyvet.domain.User;
 import com.capstone.buddyvet.dto.Buddies.BuddiesResponse;
 import com.capstone.buddyvet.dto.Buddies.DetailResponse;
 import com.capstone.buddyvet.dto.Buddies.SaveRequest;
 import com.capstone.buddyvet.dto.Buddies.SaveResponse;
-import com.capstone.buddyvet.repository.BuddyBreedRepository;
 import com.capstone.buddyvet.repository.BuddyRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -30,7 +28,6 @@ public class BuddyService {
 
 	private final AuthService authService;
 	private final BuddyRepository buddyRepository;
-	private final BuddyBreedRepository buddyBreedRepository;
 	private final S3Uploader s3Uploader;
 
 	public BuddiesResponse getBuddies() {
@@ -43,9 +40,7 @@ public class BuddyService {
 	@Transactional
 	public SaveResponse addBuddy(SaveRequest request) {
 		User user = authService.getCurrentActiveUser();
-		BuddyBreed buddyBreed = buddyBreedRepository.findById(request.getBreedId())
-			.orElseThrow(() -> new RestApiException(ErrorCode.INVALID_BREED));
-		Buddy buddy = buddyRepository.save(request.toEntity(user, buddyBreed));
+		Buddy buddy = buddyRepository.save(request.toEntity(user));
 
 		return new SaveResponse(buddy.getId());
 	}
@@ -56,7 +51,10 @@ public class BuddyService {
 
 	@Transactional
 	public SaveResponse modifyBuddy(Long buddyId, SaveRequest request) {
-		// TODO
+		User user = authService.getCurrentActiveUser();
+		Buddy buddy = buddyRepository.findByIdAndUserAndActivated(buddyId, user, true)
+			.orElseThrow(() -> new RestApiException(ErrorCode.INVALID_BUDDY));
+		buddy.modify(request);
 		return new SaveResponse(buddyId);
 	}
 
@@ -65,6 +63,7 @@ public class BuddyService {
 		getUserBuddy(buddyId).delete();
 	}
 
+	@Transactional
 	public void uploadImage(Long buddyId, MultipartFile file) {
 		Buddy buddy = getUserBuddy(buddyId);
 		User user = authService.getCurrentActiveUser();
