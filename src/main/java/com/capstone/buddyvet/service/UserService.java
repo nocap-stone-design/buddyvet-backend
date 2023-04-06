@@ -21,21 +21,7 @@ import lombok.extern.slf4j.Slf4j;
 public class UserService {
 
 	private final AuthService authService;
-	private final UserRepository userRepository;
 	private final S3Uploader s3Uploader;
-
-	/**
-	 * 유저 회원가입
-	 * @param userInfo 소셜 유저 정보
-	 * @return 유저 저장 후 유저 엔티티 반환
-	 */
-	@Transactional
-	public User registerUser(SocialUserInfo userInfo) {
-		return userRepository.save(User.builder()
-			.socialId(userInfo.getLoginId())
-				.nickname(userInfo.getNickname())
-			.build());
-	}
 
 	public Users.DetailResponse getUser() {
 		User user = authService.getCurrentActiveUser();
