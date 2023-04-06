@@ -14,10 +14,12 @@ public class Users {
 	public static class DetailResponse {
 		private Long userId;
 		private String nickname;
+		private String profile;
 
 		public DetailResponse(User user) {
 			this.userId = user.getId();
 			this.nickname = user.getNickname();
+			this.profile = user.getProfileImageUrl();
 		}
 	}
 
