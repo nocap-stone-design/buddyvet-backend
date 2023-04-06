@@ -29,7 +29,7 @@ import lombok.extern.slf4j.Slf4j;
 @Transactional(readOnly = true)
 public class AuthService {
 	private final UserRepository userRepository;
-	private final UserService userService;
+	private final SignService signService;
 	private final KakaoAuthService kakaoAuthService;
 	private final JwtTokenProvider tokenProvider;
 	private final Properties properties;
@@ -47,7 +47,7 @@ public class AuthService {
 		Optional<User> findUser = userRepository.findUserBySocialId(userInfo.getProviderType(),
 			userInfo.getLoginId(), UserState.ACTIVE);
 
-		User user = findUser.orElseGet(() -> userService.registerUser(userInfo));
+		User user = findUser.orElseGet(() -> signService.registerUser(userInfo));
 		String jwt = tokenProvider.create(user.getSocialId(), user.getState(), properties.getSecret());
 
 		if (findUser.isEmpty()) {
