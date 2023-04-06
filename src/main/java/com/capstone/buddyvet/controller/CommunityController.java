@@ -14,11 +14,9 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.capstone.buddyvet.common.dto.ResponseDto;
+import com.capstone.buddyvet.dto.CommunityPost;
 import com.capstone.buddyvet.dto.CommunityPost.AddRequest;
-import com.capstone.buddyvet.dto.CommunityPost.AddResponse;
 import com.capstone.buddyvet.dto.CommunityPost.ImageRemoveRequest;
-import com.capstone.buddyvet.dto.Example.PostDetailResponse;
-import com.capstone.buddyvet.dto.Example.PostsResponse;
 import com.capstone.buddyvet.service.CommunityService;
 
 import lombok.RequiredArgsConstructor;
@@ -35,10 +33,9 @@ public class CommunityController {
 	/**
 	 * 게시글 목록 조회
 	 * @return 작성된 게시글 목록
-	 * TODO Ex 에서 실제 구현으로 변경
 	 */
 	@GetMapping
-	public ResponseDto<PostsResponse> postListEx() {
+	public ResponseDto<CommunityPost.PostsResponse> postList() {
 		return new ResponseDto<>(communityService.getPosts());
 	}
 
@@ -46,10 +43,9 @@ public class CommunityController {
 	 * 게시글 상세 조회
 	 * @param postId 조회할 게시글 ID
 	 * @return ID 에 해당하는 게시글 상세 정보
-	 * TODO Ex 에서 실제 구현으로 변경
 	 */
 	@GetMapping("/{postId}")
-	public ResponseDto<PostDetailResponse> postDetailsEx(@PathVariable Long postId) {
+	public ResponseDto<CommunityPost.PostDetailResponse> postDetails(@PathVariable Long postId) {
 		return new ResponseDto<>(communityService.getPost(postId));
 	}
 
@@ -59,8 +55,14 @@ public class CommunityController {
 	 * @return 신규 생성된 게시글 ID
 	 */
 	@PostMapping
-	public ResponseDto<AddResponse> postAdd(@RequestBody AddRequest request) {
+	public ResponseDto postAdd(@RequestBody AddRequest request) {
 		return new ResponseDto<>(communityService.addPost(request));
+	}
+
+	@PostMapping("/{postId}")
+	public ResponseDto replyAdd(@PathVariable Long postId, @RequestBody CommunityPost.ReplyAddRequest request) {
+		communityService.addReply(postId, request);
+		return new ResponseDto(null);
 	}
 
 	/**

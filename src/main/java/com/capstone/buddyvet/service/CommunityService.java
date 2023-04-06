@@ -14,10 +14,9 @@ import com.capstone.buddyvet.domain.PostImage;
 import com.capstone.buddyvet.domain.User;
 import com.capstone.buddyvet.domain.enums.ImageState;
 import com.capstone.buddyvet.domain.enums.PostState;
+import com.capstone.buddyvet.dto.CommunityPost;
 import com.capstone.buddyvet.dto.CommunityPost.AddRequest;
 import com.capstone.buddyvet.dto.CommunityPost.AddResponse;
-import com.capstone.buddyvet.dto.Example.PostDetailResponse;
-import com.capstone.buddyvet.dto.Example.PostsResponse;
 import com.capstone.buddyvet.repository.PostImageRepository;
 import com.capstone.buddyvet.repository.PostRepository;
 
@@ -34,13 +33,14 @@ public class CommunityService {
 	private final PostImageRepository postImageRepository;
 	private final S3Uploader s3Uploader;
 
-	public PostsResponse getPosts() {
-		return new PostsResponse(postRepository.findAll());
+	public CommunityPost.PostsResponse getPosts() {
+		return new CommunityPost.PostsResponse(postRepository.findAll());
 	}
 
-	public PostDetailResponse getPost(Long postId) {
-		Post post = getPostAndValidate(postId);
-		return PostDetailResponse.of(post);
+	public CommunityPost.PostDetailResponse getPost(Long postId) {
+		Post post = postRepository.findByIdAndState(postId, PostState.ACTIVE)
+			.orElseThrow(() -> new RestApiException(ErrorCode.NOT_FOUND_POST));
+		return CommunityPost.PostDetailResponse.of(post);
 	}
 
 	@Transactional
@@ -116,5 +116,13 @@ public class CommunityService {
 		validatePostUser(post);
 
 		return post;
+	}
+
+	@Transactional
+	public void addReply(Long postId, CommunityPost.ReplyAddRequest request) {
+		User user = authService.getCurrentActiveUser();
+		Post post = postRepository.findByIdAndState(postId, PostState.ACTIVE)
+			.orElseThrow(() -> new RestApiException(ErrorCode.NOT_FOUND_POST));
+		post.saveReply(request.toEntity(post, user));
 	}
 }
