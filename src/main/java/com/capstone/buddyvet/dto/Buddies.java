@@ -124,4 +124,20 @@ public class Buddies {
 			);
 		}
 	}
+
+	/**
+	 * 모델 결과값 받아오기
+	 */
+	@Getter
+	public static class EyeCheckResult {
+		private List<Double> results;
+	}
+
+	/**
+	 * 안구 검사 체크 Response
+	 */
+	@Getter
+	public static class EyeCheckResponse {
+
+	}
 }

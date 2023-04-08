@@ -47,7 +47,7 @@ public class S3Uploader {
 			for (MultipartFile file : files) {
 				File convertFile = convert(file)
 					.orElseThrow(() -> new RestApiException(ErrorCode.FILE_CONVERT_ERROR));
-				uploadPaths.add(upload(convertFile, directory));
+				uploadPaths.add(uploadAndRemoveFile(convertFile, directory));
 			}
 			return uploadPaths;
 		} catch (IOException e) {
@@ -59,7 +59,17 @@ public class S3Uploader {
 		try {
 			File convertFile = convert(file)
 				.orElseThrow(() -> new RestApiException(ErrorCode.FILE_CONVERT_ERROR));
-			return upload(convertFile, directory);
+			return uploadAndRemoveFile(convertFile, directory);
+		} catch (IOException e) {
+			throw new RestApiException(ErrorCode.FILE_UPLOAD_ERROR);
+		}
+	}
+
+	public String uploadSingleFileForCheck(MultipartFile file, String directory) {
+		try {
+			File convertFile = convert(file)
+				.orElseThrow(() -> new RestApiException(ErrorCode.FILE_CONVERT_ERROR));
+			return uploadFile(convertFile, directory);
 		} catch (IOException e) {
 			throw new RestApiException(ErrorCode.FILE_UPLOAD_ERROR);
 		}
@@ -82,7 +92,13 @@ public class S3Uploader {
 		}
 	}
 
-	public String upload(File uploadFile, String dirName) {
+	public String uploadFile(File uploadFile, String dirName) {
+		String fileName = bucketDirectory + "/" + dirName + "/" + uploadFile.getName();
+		String uploadImageUrl = putS3(uploadFile, fileName);
+		return awsUrl + fileName;
+	}
+
+	public String uploadAndRemoveFile(File uploadFile, String dirName) {
 		String fileName = bucketDirectory + "/" + dirName + "/" + uploadFile.getName();
 		String uploadImageUrl = putS3(uploadFile, fileName);
 		removeNewFile(uploadFile);

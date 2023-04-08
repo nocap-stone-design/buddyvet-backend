@@ -21,7 +21,7 @@ public enum ErrorCode {
 	// Buddy 관련
 	INVALID_BREED("2000", HttpStatus.BAD_REQUEST, "아이디에 해당하는 품종이 없습니다."),
 	INVALID_BUDDY("2001", HttpStatus.BAD_REQUEST, "해당 버디가 존재하지 않습니다."),
-
+	INVALID_BUDDY_KIND("2002", HttpStatus.BAD_REQUEST, "잘못된 종류입니다."),
 
 	// User 관련
 	DEACTIVATED_USER("3000", HttpStatus.BAD_REQUEST, "이미 탈퇴한 회원입니다."),
@@ -38,10 +38,10 @@ public enum ErrorCode {
 
 	// Community Post 관련
 	NOT_FOUND_POST("6000", HttpStatus.NOT_FOUND, "해당 아이디의 게시글이 없습니다."),
-	NOT_FOUND_POST_IMAGE("6001", HttpStatus.NOT_FOUND, "해당 아이디의 이미지가 게시글에 없습니다."),;
+	NOT_FOUND_POST_IMAGE("6001", HttpStatus.NOT_FOUND, "해당 아이디의 이미지가 게시글에 없습니다."),
 
-
-
+	// Network 관련
+	ML_NETWORK_ERROR("7000", HttpStatus.INTERNAL_SERVER_ERROR, "모델 서버와의 통신에 실패했습니다");
 
 	private final String code;
 	private final HttpStatus httpStatus;

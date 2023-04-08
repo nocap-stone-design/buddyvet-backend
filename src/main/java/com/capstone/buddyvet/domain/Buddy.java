@@ -1,7 +1,10 @@
 package com.capstone.buddyvet.domain;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -12,6 +15,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 
 import com.capstone.buddyvet.common.domain.BaseTimeEntity;
 import com.capstone.buddyvet.domain.enums.Gender;
@@ -35,6 +39,9 @@ public class Buddy extends BaseTimeEntity {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "user_id")
 	private User user;
+
+	@OneToMany(mappedBy = "buddy", cascade = CascadeType.ALL)
+	private List<UserCheckLog> userCheckLogs = new ArrayList<>();
 
 	@Column(nullable = false, columnDefinition = "VARCHAR(128)")
 	private String name;
@@ -73,6 +80,12 @@ public class Buddy extends BaseTimeEntity {
 		this.activated = true;
 		this.adoptedAt = adoptedAt;
 		this.kind = kind;
+	}
+
+	//==연관관계 편의 메소드==//
+	public void saveCheckLog(UserCheckLog log) {
+		this.userCheckLogs.add(log);
+
 	}
 
 	//==비즈니스 로직==//

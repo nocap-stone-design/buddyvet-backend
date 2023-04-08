@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.capstone.buddyvet.common.dto.ResponseDto;
+import com.capstone.buddyvet.dto.Buddies;
 import com.capstone.buddyvet.dto.Buddies.SaveRequest;
 import com.capstone.buddyvet.dto.Buddies.SaveResponse;
 import com.capstone.buddyvet.dto.Buddies.BuddiesResponse;
@@ -88,5 +89,10 @@ public class BuddyController {
 	public ResponseDto imageUpload(@PathVariable Long buddyId, @RequestParam("image") MultipartFile file) {
 		buddyService.uploadImage(buddyId, file);
 		return new ResponseDto(null);
+	}
+
+	@PostMapping("/{buddyId}}/check/eye")
+	public ResponseDto<Buddies.EyeCheckResponse> buddyEyeCheck(@PathVariable Long buddyId, @RequestParam("image") MultipartFile file) {
+		return new ResponseDto<>(buddyService.checkBuddyEye(buddyId, file));
 	}
 }
