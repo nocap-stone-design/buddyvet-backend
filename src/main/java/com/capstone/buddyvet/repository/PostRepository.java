@@ -9,6 +9,6 @@ import com.capstone.buddyvet.domain.Post;
 import com.capstone.buddyvet.domain.enums.PostState;
 
 public interface PostRepository extends JpaRepository<Post, Long> {
-	List<Post> findAllByOrderByCreatedAtDesc();
+	List<Post> findAllByStateOrderByCreatedAtDesc(PostState state);
 	Optional<Post> findByIdAndState(Long id, PostState state);
 }
