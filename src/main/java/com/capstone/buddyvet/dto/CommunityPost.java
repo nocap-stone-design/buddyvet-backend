@@ -27,17 +27,23 @@ public class CommunityPost {
 		static class Info {
 			private Long postId;
 			private String title;
+			private String content;
 			private String thumbnail;
+			private LocalDate date;
+			private String authorNickname;
 			private int replyCount;
 
 			Info(Post post) {
 				this.postId = post.getId();
 				this.title = post.getTitle();
+				this.content = post.getContent();
 				this.thumbnail = post.getPostImages().stream()
 					.filter(image -> image.getState().equals(ImageState.ACTIVE))
 					.map(PostImage::getUrl)
 					.findFirst()
 					.orElse(null);
+				this.date = post.getCreatedAt().toLocalDate();
+				this.authorNickname = post.getUser().getNickname();
 				this.replyCount = post.getReplies().size();
 			}
 		}
@@ -68,6 +74,7 @@ public class CommunityPost {
 			private LocalDate date;
 			private Long authorId;
 			private String authorNickname;
+			private String profile;
 			private int replyCount;
 			private List<ReplyInfo> reply;
 
@@ -87,6 +94,7 @@ public class CommunityPost {
 				private Long id;
 				private Long authorId;
 				private String authorNickname;
+				private String profile;
 				private String content;
 				private LocalDate date;
 
@@ -94,6 +102,7 @@ public class CommunityPost {
 					this.id = reply.getId();
 					this.authorId = reply.getUser().getId();
 					this.authorNickname = reply.getUser().getNickname();
+					this.profile = reply.getUser().getProfileImageUrl();
 					this.content = reply.getContent();
 					this.date = reply.getCreatedAt().toLocalDate();
 				}
@@ -115,6 +124,7 @@ public class CommunityPost {
 					.date(post.getCreatedAt().toLocalDate())
 					.authorId(post.getUser().getId())
 					.authorNickname(post.getUser().getNickname())
+					.profile(post.getUser().getProfileImageUrl())
 					.replyCount(post.getReplies().size())
 					.reply(
 						post.getReplies().stream()
