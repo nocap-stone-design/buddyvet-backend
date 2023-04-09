@@ -34,7 +34,7 @@ public class CommunityService {
 	private final S3Uploader s3Uploader;
 
 	public CommunityPost.PostsResponse getPosts() {
-		return new CommunityPost.PostsResponse(postRepository.findAllByOrderByCreatedAtDesc());
+		return new CommunityPost.PostsResponse(postRepository.findAllByStateOrderByCreatedAtDesc(PostState.ACTIVE));
 	}
 
 	public CommunityPost.PostDetailResponse getPost(Long postId) {
